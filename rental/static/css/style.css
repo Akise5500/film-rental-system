@@ -1,0 +1,170 @@
+/* General Reset */
+body, h1, h2, h3, p, a {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    color: #fff;
+}
+
+/* Body Styling */
+body {
+    background-color: #141414;
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Navigation */
+.sidebar {
+    background-color: #000;
+    width: 220px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #e50914;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px 0;
+    color: #fff;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.sidebar a:hover {
+    color: #e50914;
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: 240px;
+    padding: 40px;
+    flex: 1;
+    background-color: #141414;
+}
+
+/* Heading and Button Styling */
+.main-content h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.button {
+    background-color: #e50914;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    margin: 10px 0;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #b20710;
+}
+
+/* Film Grid Layout */
+.film-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Film Card Styling */
+.film-card {
+    background-color: #222;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.film-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Film Image */
+.film-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Film Title */
+.film-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Rating Styling */
+.rating {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* Rental Dates */
+.film-card p {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+/* Edit and Cancel Links */
+.film-card .button {
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #222;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: #fff;
+    max-width: 400px;
+    width: 100%;
+}
+
+.close {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.star-rating {
+    font-size: 30px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.star-rating .selected {
+    color: #e50914;
+}

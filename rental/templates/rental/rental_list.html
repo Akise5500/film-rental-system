@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Rentals</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        /* General Styling */
+        body {
+            background-color: #141414;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .sidebar {
+            background-color: #000;
+            width: 220px;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            color: #e50914;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            color: #e50914;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 40px;
+        }
+
+        .film-row {
+            margin-top: 20px;
+        }
+
+        .film-scroll {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+        }
+
+        .film-card {
+            background-color: #222;
+            border-radius: 10px;
+            text-align: center;
+            width: 200px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .film-card:hover {
+            transform: scale(1.05);
+        }
+
+        .film-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .film-card h3 {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .film-card p {
+            font-size: 14px;
+        }
+
+        .film-card .button {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 5px;
+            background-color: #e50914;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .film-card .button:hover {
+            background-color: #b20710;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .modal h3 {
+            color: #e50914;
+            margin-bottom: 20px;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        .stars span {
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .stars span.selected {
+            color: #e50914;
+        }
+
+        .modal button {
+            background-color: #e50914;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background-color: #b20710;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Film Rental System</h2>
+            <a href="{% url 'rental_list' %}">Your Rentals</a>
+            <a href="{% url 'rent_film' %}">Rent a Film</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1>Your Rentals</h1>
+            
+
+            <div class="film-row">
+                <h3>Rented Films</h3>
+                <div class="film-scroll">
+                    {% for rental in rentals %}
+                    <div class="film-card" onclick="showRatingModal('{{ rental.film.title }}', '{{ rental.film.image.url }}')">
+                        <img src="{{ rental.film.image.url }}" alt="{{ rental.film.title }}">
+                        <h3>{{ rental.film.title }}</h3>
+                        <p>Rented on: {{ rental.rental_date }}</p>
+                        <p>Return by: {{ rental.return_date }}</p>
+                        <a href="{% url 'rental_update' rental.id %}" class="button">Edit</a>
+                        <a href="{% url 'rental_delete' rental.id %}" class="button">Cancel</a>
+                    </div>
+                    {% empty %}
+                    <p>No films rented at the moment.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Rating Modal -->
+        <div class="modal" id="rating-modal">
+            <div class="modal-content">
+                <h3 id="modal-film-title"></h3>
+                <img id="modal-film-image" src="" alt="">
+                <div class="stars" id="stars">
+                    <span data-value="1">&#9733;</span>
+                    <span data-value="2">&#9733;</span>
+                    <span data-value="3">&#9733;</span>
+                    <span data-value="4">&#9733;</span>
+                    <span data-value="5">&#9733;</span>
+                </div>
+                <button onclick="submitRating()">Submit Rating</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedRating = 0;
+
+        function showRatingModal(title, imageUrl) {
+            document.getElementById('modal-film-title').textContent = `Rate "${title}"`;
+            document.getElementById('modal-film-image').src = imageUrl;
+            document.getElementById('rating-modal').style.display = 'flex';
+            clearRating();
+        }
+
+        function submitRating() {
+            if (selectedRating > 0) {
+                alert(`You rated this film ${selectedRating} stars!`);
+                closeModal();
+            } else {
+                alert('Please select a rating.');
+            }
+        }
+
+        function clearRating() {
+            const stars = document.querySelectorAll('#stars span');
+            stars.forEach(star => star.classList.remove('selected'));
+            selectedRating = 0;
+        }
+
+        function closeModal() {
+            document.getElementById('rating-modal').style.display = 'none';
+        }
+
+        document.querySelectorAll('#stars span').forEach(star => {
+            star.addEventListener('click', () => {
+                selectedRating = star.getAttribute('data-value');
+                updateStars(selectedRating);
+            });
+        });
+
+        function updateStars(rating) {
+            const stars = document.querySelectorAll('#stars span');
+            stars.forEach(star => {
+                star.classList.toggle('selected', star.getAttribute('data-value') <= rating);
+            });
+        }
+
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('rating-modal')) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>

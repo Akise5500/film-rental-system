@@ -1,0 +1,253 @@
+
+
+{% block content %}
+<style>
+    body {
+        background-color: #141414;
+        color: #fff;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        background-color: #1f1f1f;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+        text-align: center;
+    }
+
+    .film-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .film-card {
+        background-color: #222;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .film-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .film-card img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .film-card h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .rent-button {
+        background-color: #e50914;
+        color: #fff;
+        padding: 12px;
+        font-size: 18px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .rent-button:hover {
+        background-color: #b20710;
+    }
+
+    a {
+        display: inline-block;
+        margin-top: 20px;
+        color: #e50914;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    a:hover {
+        color: #b20710;
+        text-decoration: underline;
+    }
+
+    footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #aaa;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+        background-color: #222;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 20px;
+        width: 30%;
+        display: flex;
+        gap: 20px;
+        color: #fff;
+    }
+
+    .modal-content img {
+        width: 200px;
+        height: 300px;
+        border-radius: 5px;
+    }
+
+    .modal-details {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .close {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        align-self: flex-end;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #e50914;
+    }
+
+    .second-modal-content {
+        background-color: #222;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 20px;
+        width: 40%;
+        text-align: center;
+    }
+
+</style>
+
+<div class="container">
+    <h2>Rent a Film</h2>
+    <form method="post" id="rentForm">
+        {% csrf_token %}
+        <div class="film-grid">
+            {% for film in films %}
+            <div class="film-card" onclick="openModal('{{ film.image.url }}', '{{ film.title }}', '{{ film.genre }}', '{{ film.synopsis }}', '{{ film.release_date }}', '{{ film.id }}')">
+                <img src="{{ film.image.url }}" alt="{{ film.title }}">
+                <h3>{{ film.title }}</h3>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+    <a href="{% url 'rental_list' %}">Back to Rentals</a>
+</div>
+
+<!-- First Modal -->
+<div id="filmModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img id="modalImage" src="" alt="Film Poster">
+        <div class="modal-details">
+            <h2 id="modalTitle"></h2>
+            <p><strong>Genre:</strong> <span id="modalGenre"></span></p>
+            <p><strong>Synopsis:</strong> <span id="modalSynopsis"></span></p>
+            <p><strong>Release Date:</strong> <span id="modalReleaseDate"></span></p>
+            <button class="rent-button" onclick="openSecondModal()">Proceed to Rent</button>
+        </div>
+    </div>
+</div>
+
+<!-- Second Modal for Return Date -->
+<div id="returnDateModal" class="modal">
+    <div class="second-modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Select Return Date</h2>
+        <input type="date" id="returnDate" required>
+        <button class="rent-button" onclick="submitRentForm()">Confirm Rental</button>
+    </div>
+</div>
+
+
+
+<script>
+    let selectedFilmId = null;
+
+    function openModal(imageUrl, title, genre, synopsis, releaseDate, filmId) {
+        selectedFilmId = filmId;
+        document.getElementById('modalImage').src = imageUrl;
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalGenre').textContent = genre;
+        document.getElementById('modalSynopsis').textContent = synopsis;
+        document.getElementById('modalReleaseDate').textContent = releaseDate;
+        document.getElementById('filmModal').style.display = 'block';
+    }
+
+    function openSecondModal() {
+        closeModal();
+        document.getElementById('returnDateModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('filmModal').style.display = 'none';
+        document.getElementById('returnDateModal').style.display = 'none';
+    }
+
+    function submitRentForm() {
+        const returnDate = document.getElementById('returnDate').value;
+        if (!returnDate) {
+            alert('Please select a return date.');
+            return;
+        }
+
+        const form = document.getElementById('rentForm');
+        const filmInput = document.createElement('input');
+        filmInput.type = 'hidden';
+        filmInput.name = 'film';
+        filmInput.value = selectedFilmId;
+
+        const returnDateInput = document.createElement('input');
+        returnDateInput.type = 'hidden';
+        returnDateInput.name = 'return_date';
+        returnDateInput.value = returnDate;
+
+        form.appendChild(filmInput);
+        form.appendChild(returnDateInput);
+        form.submit();
+    }
+
+    window.onclick = function(event) {
+        const filmModal = document.getElementById('filmModal');
+        const returnDateModal = document.getElementById('returnDateModal');
+        if (event.target === filmModal || event.target === returnDateModal) {
+            closeModal();
+        }
+    }
+</script>
+{% endblock %}

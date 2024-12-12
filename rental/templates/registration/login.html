@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Video background styling */
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .login-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .login-container h2 {
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 0.75rem;
+        }
+
+        .input-group i {
+            margin-right: 0.75rem;
+            color: #ccc;
+        }
+
+        .input-group input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .input-group input::placeholder {
+            color: #aaa;
+        }
+
+        .login-btn {
+            background-color: #e50914;
+            color: #fff;
+            padding: 0.75rem;
+            width: 100%;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .logo {
+            position: absolute;
+            top: 70px;
+            width: 220px;
+            height: auto;
+        }
+
+        .login-btn:hover {
+            background-color: #d40812;
+        }
+    </style>
+</head>
+<body>
+    <img src="{% static 'C:\Users\Administrator\film_rental_project\rental\static\images\logo.png' %}" alt="Logo" class="logo">
+    <!-- Video Background -->
+    <video autoplay muted loop>
+        <source src="{% static 'C:\Users\Administrator\film_rental_project\rental\static\videos\this is CINEMATOGRAPHY.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="login-btn">Log In</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Film Rental{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Film Rental System</h1>
+        <nav>
+            <a href="{% url 'rental_list' %}">Your Rentals</a> |
+            <a href="{% url 'rent_film' %}">Rent a Film</a> |
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Film Rental System</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,179 @@
+{% block content %}
+<div class="container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <h2>Film Rental System</h2>
+        <a href="{% url 'rental_list' %}">Your Rentals</a>
+        <a href="{% url 'rent_film' %}">Rent a Film</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="edit-container">
+            <div class="film-details">
+                <img src="{{ rental.film.image.url }}" alt="{{ rental.film.title }}" class="film-poster">
+            </div>
+            <div class="form-container">
+                <h2 class="film-title">{{ rental.film.title }}</h2>
+                <p class="film-genre"><strong>Genre:</strong> {{ rental.film.genre }}</p>
+                <p class="film-synopsis"><strong>Synopsis:</strong> {{ rental.film.synopsis }}</p>
+                <form method="post" class="edit-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_return_date">Return Date:</label>
+                        <input type="date" name="return_date" id="id_return_date" value="{{ rental.return_date|date:'Y-m-d' }}">
+                    </div>
+                    <button type="submit" class="rent-button">Update</button>
+                    <a href="{% url 'rental_list' %}" class="cancel-button">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+    /* General Styling */
+    body {
+        background-color: #141414;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        display: flex;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+        background-color: #000;
+        width: 220px;
+        padding: 20px;
+        height: 100vh;
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar h2 {
+        color: #e50914;
+        margin-bottom: 20px;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 10px 0;
+        color: #fff;
+        font-size: 18px;
+        transition: color 0.3s;
+    }
+
+    .sidebar a:hover {
+        color: #e50914;
+    }
+
+    /* Main Content Area */
+    .main-content {
+        margin-left: 540px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: calc(100% - 240px);
+        min-height: 100vh;
+    }
+
+    .edit-container {
+        display: flex;
+        background-color: #222;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        max-width: 800px;
+        width: 100%;
+        gap: 30px;
+    }
+
+    .film-poster {
+        width: 300px;
+        border-radius: 10px;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-width: 400px;
+    }
+
+    .film-title {
+        font-size: 24px;
+        color: #e50914;
+        margin-bottom: 10px;
+    }
+
+    .film-genre, .film-synopsis {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        margin: 20px 0;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+
+    .form-group input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    /* Update Button Styling */
+.rent-button {
+    background-color: #e50914;
+    color: #fff;
+    padding: 12px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    width: 100%; /* You can adjust this value */
+    margin: 10px 0;
+    text-align: center;
+    text-decoration: none;
+}
+
+.rent-button:hover {
+    background-color: #b20710;
+}
+
+/* Cancel Button Styling */
+.cancel-button {
+    background-color: #444;
+    color: #fff;
+    padding: 12px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    width: 94%; /* Adjust this value as needed */
+    margin: 10px 0;
+    text-align: center;
+    text-decoration: none;
+}
+
+.cancel-button:hover {
+    background-color: #666;
+}
+
+</style>
+{% endblock %}
